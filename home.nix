@@ -23,6 +23,7 @@
         awscli
         baobab
         bat
+        binutils
         black
         cachix
         cmake
@@ -47,6 +48,8 @@
         jq
         jsonnet
         kitty
+        kubectl
+        kustomize
         libev
         lsd
         nix-direnv
@@ -54,11 +57,13 @@
         nixfmt
         ocaml
         oh-my-zsh
+        okta-aws-cli
         opam
         pcre
         pipx
         pkg-config
         poetry
+        postgresql_15_jit
         pre-commit
         protobuf
         pyright
@@ -79,6 +84,7 @@
         zsh-syntax-highlighting
       ] ++ (with pkgs.nodePackages; [ eslint typescript-language-server ]);
   };
+  services = { emacs.enable = true; };
   programs = {
     # Let Home Manager install and manage itself.
     home-manager.enable = true;

@@ -6,8 +6,6 @@
     ripgrep
     sketchybar
     skhd
-    # needed for emacs
-    tree-sitter
     vim
     yabai
   ];
@@ -16,7 +14,11 @@
 
   homebrew = {
     enable = true;
-    brews = [ ];
+    brews = [{
+      name = "semgrep/infra/libxmlsec1@1.2.37";
+      link = true;
+      conflicts_with = [ "libxmlsec1" ];
+    }];
     caskArgs.appdir = "~/Applications";
     casks = [
       "dmenu-mac"
@@ -26,6 +28,10 @@
       "font-iosevka-nerd-font"
       "font-hack-nerd-font"
     ];
+    taps = [{
+      name = "semgrep/infra";
+      clone_target = "git@github.com:semgrep/homebrew-infra.git";
+    }];
   };
   services = {
     # Auto upgrade nix package and the daemon service.
@@ -41,15 +47,12 @@
       enable = true;
       skhdConfig = (builtins.readFile ./skhdrc);
     };
+    # Status bar for macOS
     sketchybar = {
       enable = true;
       config = ''
         PLUGIN_DIR=${./sketchybar/plugins}
       '' + (builtins.readFile ./sketchybarrc);
-    };
-    emacs = {
-      enable = true;
-      package = "/opt/homebrew";
     };
   };
   # nix.package = pkgs.nix;
