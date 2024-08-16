@@ -1,4 +1,7 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+let pkgsWithEmacsPatches = pkgs.extend (import ./emacs.nix);
+in let pkgs = pkgsWithEmacsPatches;
+in {
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
   environment.systemPackages = with pkgs; [
@@ -7,6 +10,7 @@
     sketchybar
     skhd
     vim
+    emacs
     yabai
   ];
   environment.pathsToLink = [ "/share/zsh" ];
@@ -21,9 +25,9 @@
     }];
     caskArgs.appdir = "~/Applications";
     casks = [
+      "mactex"
       "dmenu-mac"
       "kap"
-      "mactex"
       "sf-symbols"
       "font-iosevka-nerd-font"
       "font-hack-nerd-font"
@@ -36,6 +40,10 @@
   services = {
     # Auto upgrade nix package and the daemon service.
     nix-daemon.enable = true;
+    emacs = {
+      enable = true;
+      package = pkgs.emacs;
+    };
     # Tiling WM for macOS
     yabai = {
       enable = true;
@@ -45,7 +53,10 @@
     # Hotkey daemon for yabai
     skhd = {
       enable = true;
-      skhdConfig = (builtins.readFile ./skhdrc);
+      skhdConfig = ''
+        # emacs
+        cmd - e : ${pkgs.emacs}/bin/emacsclient -c -s $(lsof -c emacs | grep emacs$UID/server | grep -E -o '[^[:blank:]]*$')
+      '' + (builtins.readFile ./skhdrc);
     };
     # Status bar for macOS
     sketchybar = {

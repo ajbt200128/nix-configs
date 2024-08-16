@@ -1,7 +1,6 @@
 { config, pkgs, ... }:
 
 {
-  nixpkgs.overlays = [ import ./emacs.nix ];
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
   home = {
@@ -15,12 +14,13 @@
     # changes in each release.
     stateVersion = "24.05";
 
-    packages = with (pkgs.extend (import ./emacs.nix));
+    # TODO sort by category
+    packages = with pkgs;
       [
         asciinema
         aspell
         autoconf
-        awscli
+        awscli2
         baobab
         bat
         binutils
@@ -32,7 +32,6 @@
         direnv
         docker
         docker-compose
-        emacs
         emscripten
         fd
         ffmpeg
@@ -71,6 +70,7 @@
         shellcheck
         shfmt
         speedtest-go
+        spotify
         starship
         terraform
         tree-sitter
@@ -84,7 +84,6 @@
         zsh-syntax-highlighting
       ] ++ (with pkgs.nodePackages; [ eslint typescript-language-server ]);
   };
-  services = { emacs.enable = true; };
   programs = {
     # Let Home Manager install and manage itself.
     home-manager.enable = true;
@@ -103,8 +102,10 @@
 
       shellAliases = {
         ls = "${pkgs.lsd}/bin/lsd";
-        et = "${pkgs.emacs}/bin/emacsclient -nw";
-        "rec" = "{pkgs.asciinema}/bin/asciinema rec -q";
+        et =
+          "TERM=xterm ${pkgs.emacs}/bin/emacsclient -nw -s $(lsof -c emacs | grep emacs$UID/server | grep -E -o '[^[:blank:]]*$')";
+        icat = "kitty +kitten icat";
+        ssh = "kitty +kitten ssh";
         rebuild = "darwin-rebuild switch --flake $HOME/nix-darwin";
       };
       oh-my-zsh = {
@@ -128,8 +129,8 @@
           ${pkgs.ripgrep}/bin/rg --json -C 2 "$@" | ${pkgs.delta}/bin/delta
         }
         function login-aws() {
-          ${pkgs.awscli}/bin/aws sso login --sso-session semgrep
-          ${pkgs.awscli}/bin/aws ecr get-login-password | ${pkgs.docker}/bin/docker login --username AWS --password-stdin 338683922796.dkr.ecr.us-west-2.amazonaws.com
+          ${pkgs.awscli2}/bin/aws sso login --sso-session semgrep
+          ${pkgs.awscli2}/bin/aws ecr get-login-password | ${pkgs.docker}/bin/docker login --username AWS --password-stdin 338683922796.dkr.ecr.us-west-2.amazonaws.com
         }
         if [[ -z "$\{SEMGREP_NIX_BUILD-\}" ]]; then
           eval $(opam env)

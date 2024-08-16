@@ -69,18 +69,15 @@ cmd + shift - r : yabai --restart-service; skhd --reload; sketchybar --reload
 # lock
 cmd + shift - 0 : pmset displaysleepnow
 
-# emacs
-cmd - e : emacsclient -c work
-
 # kitty
 cmd - t : kitty -1
 
 # google chrome
 cmd - g : open -a "Google Chrome"
 
+
 # slack
 cmd - m : open -a "Slack"
-
 # dmenu
 cmd - d : open -a "dmenu-mac"
 
