@@ -56,6 +56,7 @@ format = '\[[$symbol$version]($style)\]'
 [status]
 format = '[$symbol$common_meaning$signal_name$maybe_int]($style) '
 map_symbol = true
+symbol = ''
 disabled = false
 
 [sudo]
