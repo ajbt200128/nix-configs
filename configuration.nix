@@ -18,11 +18,14 @@ in {
 
   homebrew = {
     enable = true;
-    brews = [{
-      name = "semgrep/infra/libxmlsec1@1.2.37";
-      link = true;
-      conflicts_with = [ "libxmlsec1" ];
-    }];
+    brews = [
+      {
+        name = "semgrep/infra/libxmlsec1@1.2.37";
+        link = true;
+        conflicts_with = [ "libxmlsec1" ];
+      }
+      "emscripten"
+    ];
     caskArgs.appdir = "~/Applications";
     casks = [
       "mactex"

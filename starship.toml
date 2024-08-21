@@ -4,19 +4,74 @@
 # Inserts a blank line between shell prompts
 add_newline = true
 
-format = "$username$all"
+format = "$time$username$all"
 
 # Replace the "❯" symbol in the prompt with "➜"
 [character] # The name of the module we are configuring is "character"
 success_symbol = "[¬](bold green) " # The "success_symbol" segment is being set to "➜" with the color "bold green"
 error_symbol = "[✗](bold red) "
 format="$symbol"
-# ~/.config/starship.toml
 
+## enviuronment stuff
 [aws]
+disabled = true
 symbol = "  "
 format = '\[[$symbol($profile)(\($region\))(\[$duration\])]($style)\]'
 
+[cmd_duration]
+style = 'dimmed fg:#D3D3D3'
+format = '[ in $duration]($style)'
+
+[directory]
+read_only = " "
+
+[direnv]
+disabled = false
+symbol = "📥"
+allowed_msg = "️👌"
+not_allowed_msg = "🛑"
+denied_msg = "🚫"
+loaded_msg = "✅️"
+unloaded_msg = "❌"
+format = '\[[$symbol$allowed$loaded]($style)\]'
+
+[git_branch]
+symbol = " "
+format = '\[[$symbol$branch]($style)\]'
+
+[git_status]
+disabled = false
+format = '\[[$all_status$ahead_behind]($style)\]'
+
+[nix_shell]
+symbol = " "
+impure_msg = "🦠"
+pure_msg = "🙏"
+format = '\[[$symbol$state]($style)\]'
+
+[package]
+symbol = "📦 "
+format = '\[[$symbol$version]($style)\]'
+
+[status]
+format = '[$symbol$common_meaning$signal_name$maybe_int]($style) '
+map_symbol = true
+disabled = false
+
+[sudo]
+disabled = false
+symbol = '🧙'
+format = '[ as $symbol]($style)'
+
+[time]
+disabled = false
+style = 'dimmed fg:#D3D3D3'
+format = '[$time]($style) '
+
+[username]
+format = '\[[$user]($style)\]'
+
+## language stuff
 [buf]
 symbol = " "
 
@@ -27,11 +82,28 @@ format = '\[[$symbol($version(-$name))]($style)\]'
 [cmake]
 format = '\[[$symbol($version)]($style)\]'
 
-[cmd_duration]
-format = '\[[⏱ $duration]($style)\]'
+[cobol]
+format = '\[[$symbol($version)]($style)\]'
 
-[directory]
-read_only = " "
+[conda]
+format = '\[[$symbol$environment]($style)\]'
+symbol = " "
+
+[crystal]
+format = '\[[$symbol($version)]($style)\]'
+
+[dart]
+format = '\[[$symbol($version)]($style)\]'
+symbol = " "
+
+[deno]
+format = '\[[$symbol($version)]($style)\]'
+
+[docker_context]
+disabled = true
+
+[dotnet]
+format = '\[[$symbol($version)(🎯 $tfm)]($style)\]'
 
 [elixir]
 symbol = " "
@@ -41,9 +113,11 @@ format = '\[[$symbol($version \(OTP $otp_version\))]($style)\]'
 symbol = " "
 format = '\[[$symbol($version)]($style)\]'
 
-[git_branch]
-symbol = " "
-format = '\[[$symbol$branch]($style)\]'
+[erlang]
+format = '\[[$symbol($version)]($style)\]'
+
+[gcloud]
+format = '\[[$symbol$account(@$domain)(\($region\))]($style)\]'
 
 [golang]
 symbol = " "
@@ -51,6 +125,9 @@ format = '\[[$symbol($version)]($style)\]'
 
 [haskell]
 symbol = " "
+format = '\[[$symbol($version)]($style)\]'
+
+[helm]
 format = '\[[$symbol($version)]($style)\]'
 
 [hg_branch]
@@ -65,76 +142,6 @@ format = '\[[$symbol($version)]($style)\]'
 symbol = " "
 format = '\[[$symbol($version)]($style)\]'
 
-[memory_usage]
-symbol = " "
-format = '\[$symbol[$ram( | $swap)]($style)\]'
-
-[nim]
-symbol = " "
-format = '\[[$symbol($version)]($style)\]'
-
-[nix_shell]
-symbol = " "
-format = '\[[$symbol$state( \($name\))]($style)\]'
-
-[nodejs]
-symbol = " "
-format = '\[[$symbol($version)]($style)\]'
-
-[package]
-symbol = " "
-format = '\[[$symbol$version]($style)\]'
-
-[python]
-symbol = " "
-format = '\[[${symbol}${pyenv_prefix}(${version})(\($virtualenv\))]($style)\]'
-
-[spack]
-symbol = "🅢 "
-format = '\[[$symbol$environment]($style)\]'
-
-[rust]
-symbol = " "
-format = '\[[$symbol($version)]($style)\]'
-
-[cobol]
-format = '\[[$symbol($version)]($style)\]'
-
-[conda]
-format = '\[[$symbol$environment]($style)\]'
-symbol = " "
-
-
-[crystal]
-format = '\[[$symbol($version)]($style)\]'
-
-[dart]
-format = '\[[$symbol($version)]($style)\]'
-symbol = " "
-
-[deno]
-format = '\[[$symbol($version)]($style)\]'
-
-[docker_context]
-format = '\[[$symbol$context]($style)\]'
-symbol = " "
-
-[dotnet]
-format = '\[[$symbol($version)(🎯 $tfm)]($style)\]'
-
-[erlang]
-format = '\[[$symbol($version)]($style)\]'
-
-[gcloud]
-format = '\[[$symbol$account(@$domain)(\($region\))]($style)\]'
-
-
-[git_status]
-format = '([\[$all_status$ahead_behind\]]($style))'
-
-[helm]
-format = '\[[$symbol($version)]($style)\]'
-
 [kotlin]
 format = '\[[$symbol($version)]($style)\]'
 
@@ -143,6 +150,13 @@ format = '\[[$symbol$context( \($namespace\))]($style)\]'
 
 [lua]
 format = '\[[$symbol($version)]($style)\]'
+
+[nim]
+symbol = " "
+format = '\[[$symbol($version)]($style)\]'
+
+[nodejs]
+disabled = true
 
 [ocaml]
 format = '\[[$symbol($version)(\($switch_indicator$switch_name\))]($style)\]'
@@ -162,29 +176,32 @@ format = '\[[$symbol$stack]($style)\]'
 [purescript]
 format = '\[[$symbol($version)]($style)\]'
 
+[python]
+symbol = " "
+format = '\[[${symbol}${pyenv_prefix}(${version})(\($virtualenv\))]($style)\]'
+
 [red]
 format = '\[[$symbol($version)]($style)\]'
 
 [ruby]
 format = '\[[$symbol($version)]($style)\]'
 
+[rust]
+symbol = " "
+format = '\[[$symbol($version)]($style)\]'
+
 [scala]
 format = '\[[$symbol($version)]($style)\]'
 
-[sudo]
-format = '\[[as $symbol]\]'
+[spack]
+symbol = "🅢 "
+format = '\[[$symbol$environment]($style)\]'
 
 [swift]
 format = '\[[$symbol($version)]($style)\]'
 
 [terraform]
 format = '\[[$symbol$workspace]($style)\]'
-
-[time]
-format = '\[[$time]($style)\]'
-
-[username]
-format = '\[[$user]($style)\]'
 
 [vagrant]
 format = '\[[$symbol($version)]($style)\]'
@@ -194,5 +211,3 @@ format = '\[[$symbol($version)]($style)\]'
 
 [zig]
 format = '\[[$symbol($version)]($style)\]'
- 
-        

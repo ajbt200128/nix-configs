@@ -32,7 +32,6 @@
         direnv
         docker
         docker-compose
-        emscripten
         fd
         ffmpeg
         fzf
