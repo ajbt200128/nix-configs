@@ -72,6 +72,7 @@
         spotify
         starship
         terraform
+        time
         tree-sitter
         vsce
         vscode
@@ -81,7 +82,7 @@
         yq-go
         zsh-autosuggestions
         zsh-syntax-highlighting
-      ] ++ (with pkgs.nodePackages; [ eslint typescript-language-server ]);
+      ] ++ (with pkgs.nodePackages; [ typescript-language-server ]);
   };
   programs = {
     # Let Home Manager install and manage itself.
@@ -106,6 +107,10 @@
         icat = "kitty +kitten icat";
         ssh = "kitty +kitten ssh";
         rebuild = "darwin-rebuild switch --flake $HOME/nix-darwin";
+        stoplinuxbox =
+          "${pkgs.awscli2}/bin/aws ec2 stop-instances --profile engineer-sandbox --instance-ids i-02146285258ff4d08";
+        linuxbox =
+          "${pkgs.awscli2}/bin/aws ec2-instance-connect ssh --private-key-file ~/.ssh/aws_sandbox_ec2 --profile engineer-sandbox --os-user root --instance-id i-02146285258ff4d08";
       };
       oh-my-zsh = {
         enable = true;
@@ -131,6 +136,18 @@
           ${pkgs.awscli2}/bin/aws sso login --sso-session semgrep
           ${pkgs.awscli2}/bin/aws ecr get-login-password | ${pkgs.docker}/bin/docker login --username AWS --password-stdin 338683922796.dkr.ecr.us-west-2.amazonaws.com
         }
+
+        function login-aws-sandbox() {
+          ${pkgs.awscli2}/bin/aws sso login --sso-session semgrep --profile engineer-sandbox
+          ${pkgs.awscli2}/bin/aws ecr get-login-password | ${pkgs.docker}/bin/docker login --username AWS --password-stdin 533267142541.dkr.ecr.us-west-2.amazonaws.com
+        }
+
+        function startlinuxbox() {
+          ${pkgs.awscli2}/bin/aws ec2 start-instances --profile engineer-sandbox --instance-ids i-02146285258ff4d08
+          ip_addr=$(${pkgs.awscli2}/bin/aws ec2 describe-instances --profile engineer-sandbox --instance-ids i-02146285258ff4d08 --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
+          echo "Host linuxbox\n\tHostname $ip_addr\n\tUser root\n\tIdentityFile ~/.ssh/aws_sandbox_ec2" > ~/.ssh/aws_box_config
+        }
+
         if [[ -z "$\{SEMGREP_NIX_BUILD-\}" ]]; then
           eval $(opam env)
         fi

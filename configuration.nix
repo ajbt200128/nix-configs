@@ -34,6 +34,7 @@ in {
       "sf-symbols"
       "font-iosevka-nerd-font"
       "font-hack-nerd-font"
+      "xquartz"
     ];
     taps = [{
       name = "semgrep/infra";
