@@ -64,7 +64,7 @@ cmd + ctrl - s : yabai -m space --create
 cmd + shift - f : yabai -m window --toggle native-fullscreen
 
 # restart wm
-cmd + shift - r : yabai --restart-service; skhd --reload; sketchybar --reload
+cmd + shift - r : launchctl kickstart -k gui/502/org.nixos.yabai; skhd --reload; sketchybar --reload
 
 # lock
 cmd + shift - 0 : pmset displaysleepnow

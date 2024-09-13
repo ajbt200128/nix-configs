@@ -102,8 +102,12 @@
 
       shellAliases = {
         ls = "${pkgs.lsd}/bin/lsd";
-        et =
-          "TERM=xterm ${pkgs.emacs}/bin/emacsclient -nw -s $(lsof -c emacs | grep emacs$UID/server | grep -E -o '[^[:blank:]]*$')";
+        esrestart = "launchctl kickstart -k gui/502/org.nixos.emacs";
+        eswhere =
+          "lsof -c emacs | grep emacs$UID/server | grep -E -o '[^[:blank:]]*$' | head -n 1";
+        et = "TERM=xterm ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere)";
+        magit =
+          "git rev-parse --show-toplevel &> /dev/null && TERM=xterm ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval '(magit-status)'";
         icat = "kitty +kitten icat";
         ssh = "kitty +kitten ssh";
         rebuild = "darwin-rebuild switch --flake $HOME/nix-darwin";
@@ -146,6 +150,10 @@
           ${pkgs.awscli2}/bin/aws ec2 start-instances --profile engineer-sandbox --instance-ids i-02146285258ff4d08
           ip_addr=$(${pkgs.awscli2}/bin/aws ec2 describe-instances --profile engineer-sandbox --instance-ids i-02146285258ff4d08 --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
           echo "Host linuxbox\n\tHostname $ip_addr\n\tUser root\n\tIdentityFile ~/.ssh/aws_sandbox_ec2" > ~/.ssh/aws_box_config
+        }
+
+        function vlf() {
+          TERM=xterm ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval "(vlf \"$1\")"
         }
 
         if [[ -z "$\{SEMGREP_NIX_BUILD-\}" ]]; then
