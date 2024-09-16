@@ -1,6 +1,5 @@
 {
   description = "Austin Work Nix";
-
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-darwin.url = "github:LnL7/nix-darwin";

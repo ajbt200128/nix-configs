@@ -70,10 +70,18 @@ in {
       '' + (builtins.readFile ./sketchybarrc);
     };
   };
-  # nix.package = pkgs.nix;
 
-  # Necessary for using flakes on this system.
-  nix.settings.experimental-features = "nix-command flakes";
+  nix.settings = {
+    # Necessary for using flakes on this system.
+    experimental-features = "nix-command flakes";
+    trusted-substituters = [ "r2cuser" ];
+    substituters =
+      [ "https://nix-community.cachix.org" "https://semgrep.cachix.org" ];
+    trusted-public-keys = [
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      "semgrep.cachix.org-1:waxSNb3ism0Vkmfa31//YYrOC2eMghZmTwy9bvMAGBI="
+    ];
+  };
 
   # Create /etc/zshrc that loads the nix-darwin environment.
   programs.zsh.enable = true; # default shell on catalina
