@@ -77,6 +77,7 @@
         vsce
         vscode
         wget
+        wordnet
         yaml-language-server
         yarn
         yq-go
@@ -105,9 +106,9 @@
         esrestart = "launchctl kickstart -k gui/502/org.nixos.emacs";
         eswhere =
           "lsof -c emacs | grep emacs$UID/server | grep -E -o '[^[:blank:]]*$' | head -n 1";
-        et = "TERM=xterm ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere)";
+        et = "TERM=xterm-emacs ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere)";
         magit =
-          "git rev-parse --show-toplevel &> /dev/null && TERM=xterm ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval '(magit-status)'";
+          "git rev-parse --show-toplevel &> /dev/null && TERM=xterm-emacs ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval '(magit-status)'";
         icat = "kitty +kitten icat";
         ssh = "kitty +kitten ssh";
         rebuild = "darwin-rebuild switch --flake $HOME/nix-darwin";
@@ -153,7 +154,7 @@
         }
 
         function vlf() {
-          TERM=xterm ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval "(vlf \"$1\")"
+          TERM=xterm-emacs ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval "(vlf \"$1\")"
         }
 
         if [[ -z "$\{SEMGREP_NIX_BUILD-\}" ]]; then
