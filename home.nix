@@ -13,6 +13,7 @@
     # the Home Manager release notes for a list of state version
     # changes in each release.
     stateVersion = "24.05";
+    sessionVariables = { };
 
     # TODO sort by category
     packages = with pkgs;
@@ -106,9 +107,14 @@
         esrestart = "launchctl kickstart -k gui/502/org.nixos.emacs";
         eswhere =
           "lsof -c emacs | grep emacs$UID/server | grep -E -o '[^[:blank:]]*$' | head -n 1";
-        et = "TERM=xterm-emacs ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere)";
+        et = "${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere)";
         magit =
-          "git rev-parse --show-toplevel &> /dev/null && TERM=xterm-emacs ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval '(magit-status)'";
+          "git rev-parse --show-toplevel &> /dev/null && ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval '(magit-status)'";
+        agenda = ''
+          ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval '(org-agenda nil "c")' '';
+
+        todo =
+          "${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval '(org-capture)' ";
         icat = "kitty +kitten icat";
         ssh = "kitty +kitten ssh";
         rebuild = "darwin-rebuild switch --flake $HOME/nix-darwin";
@@ -154,9 +160,9 @@
         }
 
         function vlf() {
-          TERM=xterm-emacs ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval "(vlf \"$1\")"
+          ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval "(vlf \"$1\")"
         }
-
+        ln -s -F ${pkgs.kitty.terminfo.outPath}/share/terminfo/78/xterm-kitty ~/.terminfo/78/xterm-kitty
         if [[ -z "$\{SEMGREP_NIX_BUILD-\}" ]]; then
           eval $(opam env)
         fi
