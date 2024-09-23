@@ -113,8 +113,8 @@
         agenda = ''
           ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval '(org-agenda nil "c")' '';
 
-        todo =
-          "${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval '(org-capture)' ";
+        todo = ''
+          ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval '(org-capture nil "t")' '';
         icat = "kitty +kitten icat";
         ssh = "kitty +kitten ssh";
         rebuild = "darwin-rebuild switch --flake $HOME/nix-darwin";
