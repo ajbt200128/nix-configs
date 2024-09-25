@@ -13,7 +13,6 @@
     # the Home Manager release notes for a list of state version
     # changes in each release.
     stateVersion = "24.05";
-    sessionVariables = { };
 
     # TODO sort by category
     packages = with pkgs;
@@ -96,10 +95,14 @@
     };
     zsh = {
       enable = true;
+      sessionVariables = {
+        PATH = "$HOME/.emacs.d/bin:$HOME/.local/bin:$PATH";
+        BAT_THEME = "Nord";
+        AWS_PROFILE = "engineer";
+      };
       enableCompletion = true;
       syntaxHighlighting.enable = true;
 
-      envExtra = (builtins.readFile ./zshenv);
       autosuggestion.enable = true;
 
       shellAliases = {
@@ -112,7 +115,6 @@
           "git rev-parse --show-toplevel &> /dev/null && ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval '(magit-status)'";
         agenda = ''
           ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval '(org-agenda nil "c")' '';
-
         todo = ''
           ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval '(org-capture nil "t")' '';
         icat = "kitty +kitten icat";
@@ -166,6 +168,8 @@
         if [[ -z "$\{SEMGREP_NIX_BUILD-\}" ]]; then
           eval $(opam env)
         fi
+        # Doesn't work when set in session vars for some reason
+        export EDITOR="${pkgs.emacs}/bin/emacsclient -nw -s $(lsof -c emacs | grep emacs$UID/server | grep -E -o '[^[:blank:]]*$' | head -n 1)"
         # check if cwd = /
         if [ "$PWD" = "/" ]; then
           cd ~
