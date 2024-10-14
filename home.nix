@@ -25,6 +25,7 @@
         bat
         binutils
         black
+        btop
         cachix
         cmake
         curl
