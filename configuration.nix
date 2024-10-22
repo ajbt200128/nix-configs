@@ -11,6 +11,7 @@ in {
     skhd
     vim
     emacs
+    (aspellWithDicts (dicts: with dicts; [ en en-computers en-science es ]))
     yabai
   ];
   environment.pathsToLink = [ "/share/zsh" ];
