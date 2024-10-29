@@ -75,6 +75,7 @@
         terraform
         time
         tree-sitter
+        uv
         vsce
         vscode
         wget
@@ -120,11 +121,13 @@
           ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval '(org-capture nil "t")' '';
         icat = "kitty +kitten icat";
         ssh = "kitty +kitten ssh";
-        rebuild = "darwin-rebuild switch --flake $HOME/nix-darwin";
+        rebuild =
+          "darwin-rebuild switch --flake $HOME/nix-darwin && source ~/.zshrc";
         stoplinuxbox =
           "${pkgs.awscli2}/bin/aws ec2 stop-instances --profile engineer-sandbox --instance-ids i-02146285258ff4d08";
         linuxbox =
           "${pkgs.awscli2}/bin/aws ec2-instance-connect ssh --private-key-file ~/.ssh/aws_sandbox_ec2 --profile engineer-sandbox --os-user root --instance-id i-02146285258ff4d08";
+        "rec" = "${pkgs.asciinema}/bin/asciinema rec";
       };
       oh-my-zsh = {
         enable = true;
