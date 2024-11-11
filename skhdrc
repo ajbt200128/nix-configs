@@ -86,3 +86,6 @@ cmd - p : open -a "Screenshot"
 
 # kap
 cmd - r : open -a "Kap"
+
+#emacs
+cmd - e : emacsclient -c -s $(lsof -c emacs | grep emacs$UID/server | grep -E -o '[^[:blank:]]*$' | head -n 1)

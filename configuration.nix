@@ -5,13 +5,13 @@ in {
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
   environment.systemPackages = with pkgs; [
+    emacs
+    enchant
     htop
     ripgrep
     sketchybar
     skhd
     vim
-    emacs
-    (aspellWithDicts (dicts: with dicts; [ en en-computers en-science es ]))
     yabai
   ];
   environment.pathsToLink = [ "/share/zsh" ];
@@ -26,15 +26,16 @@ in {
         conflicts_with = [ "libxmlsec1" ];
       }
       "emscripten"
+      "enchant"
     ];
     caskArgs.appdir = "~/Applications";
     casks = [
-      "mactex"
       "dmenu-mac"
-      "kap"
-      "sf-symbols"
-      "font-iosevka-nerd-font"
       "font-hack-nerd-font"
+      "font-iosevka-nerd-font"
+      "kap"
+      "mactex"
+      "sf-symbols"
       "xquartz"
     ];
     taps = [{
@@ -58,10 +59,7 @@ in {
     # Hotkey daemon for yabai
     skhd = {
       enable = true;
-      skhdConfig = ''
-        # emacs
-        cmd - e : ${pkgs.emacs}/bin/emacsclient -c -s $(lsof -c emacs | grep emacs$UID/server | grep -E -o '[^[:blank:]]*$')
-      '' + (builtins.readFile ./skhdrc);
+      skhdConfig = (builtins.readFile ./skhdrc);
     };
     # Status bar for macOS
     sketchybar = {

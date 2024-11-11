@@ -18,7 +18,6 @@
     packages = with pkgs;
       [
         asciinema
-        aspell
         autoconf
         awscli2
         baobab
@@ -33,6 +32,7 @@
         direnv
         docker
         docker-compose
+        exiftool
         fd
         ffmpeg
         fzf
@@ -146,6 +146,7 @@
         ];
       };
       initExtra = ''
+        ## Advanced shell functions
         function rgd() {
           ${pkgs.ripgrep}/bin/rg --json -C 2 "$@" | ${pkgs.delta}/bin/delta
         }
@@ -168,12 +169,26 @@
         function vlf() {
           ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval "(vlf \"$1\")"
         }
+
+        ## Terminal settings
+        # So we get some nice things from vterm
+        if [[ "$INSIDE_EMACS" = 'vterm' ]] \
+            && [[ -n ''${EMACS_VTERM_PATH} ]] \
+            && [[ -f ''${EMACS_VTERM_PATH}/etc/emacs-vterm-zsh.sh ]]; then
+          source ''${EMACS_VTERM_PATH}/etc/emacs-vterm-zsh.sh
+        fi
+
+        # So we get proper colors from emacs in the terminal
         ln -s -F ${pkgs.kitty.terminfo.outPath}/share/terminfo/78/xterm-kitty ~/.terminfo/78/xterm-kitty
-        if [[ -z "$\{SEMGREP_NIX_BUILD-\}" ]]; then
+
+        # Set default editor to emacsclient
+        export EDITOR="${pkgs.emacs}/bin/emacsclient -nw -s $(lsof -c emacs | grep emacs$UID/server | grep -E -o '[^[:blank:]]*$' | head -n 1)"
+
+        # eval opam if we arent in the semgrep flake dir
+        if [[ -z "''${SEMGREP_NIX_BUILD-}" ]]; then
           eval $(opam env)
         fi
         # Doesn't work when set in session vars for some reason
-        export EDITOR="${pkgs.emacs}/bin/emacsclient -nw -s $(lsof -c emacs | grep emacs$UID/server | grep -E -o '[^[:blank:]]*$' | head -n 1)"
         # check if cwd = /
         if [ "$PWD" = "/" ]; then
           cd ~
