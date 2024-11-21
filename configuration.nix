@@ -8,6 +8,7 @@ in {
     emacs
     enchant
     htop
+    juicefs
     ripgrep
     sketchybar
     skhd
@@ -34,6 +35,7 @@ in {
       "font-hack-nerd-font"
       "font-iosevka-nerd-font"
       "kap"
+      "macfuse"
       "mactex"
       "sf-symbols"
       "xquartz"

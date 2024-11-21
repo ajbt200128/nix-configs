@@ -73,8 +73,7 @@ cmd + shift - 0 : pmset displaysleepnow
 cmd - t : kitty -1
 
 # google chrome
-cmd - g : open -a "Google Chrome"
-
+cmd - g : open -n -a "Google Chrome"
 
 # slack
 cmd - m : open -a "Slack"

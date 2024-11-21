@@ -65,7 +65,7 @@
         postgresql_15_jit
         pre-commit
         protobuf
-        pyright
+        basedpyright
         rustup
         shellcheck
         shfmt
