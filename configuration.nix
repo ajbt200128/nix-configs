@@ -4,18 +4,20 @@ in let pkgs = pkgsWithEmacsPatches;
 in {
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
-  environment.systemPackages = with pkgs; [
-    emacs
-    enchant
-    htop
-    juicefs
-    ripgrep
-    sketchybar
-    skhd
-    vim
-    yabai
-  ];
-  environment.pathsToLink = [ "/share/zsh" ];
+  environment = {
+    systemPackages = with pkgs; [
+      emacs
+      htop
+      juicefs
+      pkg-config
+      ripgrep
+      sketchybar
+      skhd
+      vim
+      yabai
+    ];
+    pathsToLink = [ "/share/zsh" ];
+  };
   fonts.packages = with pkgs; [ fira-code source-code-pro ];
 
   homebrew = {

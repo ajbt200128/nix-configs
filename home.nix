@@ -60,7 +60,6 @@
         opam
         pcre
         pipx
-        pkg-config
         poetry
         postgresql_15_jit
         pre-commit
@@ -179,7 +178,7 @@
         fi
 
         # So we get proper colors from emacs in the terminal
-        ln -s -F ${pkgs.kitty.terminfo.outPath}/share/terminfo/78/xterm-kitty ~/.terminfo/78/xterm-kitty
+        # ln -s -F ${pkgs.kitty.terminfo.outPath}/share/terminfo/78/xterm-kitty ~/.terminfo/78/xterm-kitty
 
         # Set default editor to emacsclient
         export EDITOR="${pkgs.emacs}/bin/emacsclient -nw -s $(lsof -c emacs | grep emacs$UID/server | grep -E -o '[^[:blank:]]*$' | head -n 1)"
@@ -188,6 +187,9 @@
         if [[ -z "''${SEMGREP_NIX_BUILD-}" ]]; then
           eval $(opam env)
         fi
+
+        # Set up homebrew
+        export PKG_CONFIG_PATH="$HOMEBREW_PREFIX/lib/pkgconfig:$PKG_CONFIG_PATH";
         # Doesn't work when set in session vars for some reason
         # check if cwd = /
         if [ "$PWD" = "/" ]; then
