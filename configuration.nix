@@ -33,6 +33,7 @@ in {
     ];
     caskArgs.appdir = "~/Applications";
     casks = [
+      "betterdisplay"
       "dmenu-mac"
       "font-hack-nerd-font"
       "font-iosevka-nerd-font"
