@@ -22,16 +22,15 @@
         awscli2
         baobab
         bat
-        binutils
         black
         btop
         cachix
-        cmake
         curl
         delta
         direnv
         docker
         docker-compose
+        dos2unix
         exiftool
         fd
         ffmpeg
@@ -54,7 +53,6 @@
         nix-direnv
         nodejs
         nixfmt
-        ocaml
         oh-my-zsh
         okta-aws-cli
         opam
