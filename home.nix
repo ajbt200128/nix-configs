@@ -135,7 +135,6 @@
           "colored-man-pages"
           "command-not-found"
           "docker"
-
           "npm"
           "pep8"
           "pip"
