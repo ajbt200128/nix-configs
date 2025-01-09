@@ -31,6 +31,7 @@
         docker
         docker-compose
         dos2unix
+        evil-helix
         exiftool
         fd
         ffmpeg
@@ -134,6 +135,7 @@
           "colored-man-pages"
           "command-not-found"
           "docker"
+
           "npm"
           "pep8"
           "pip"
