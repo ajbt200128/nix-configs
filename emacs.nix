@@ -15,6 +15,7 @@ self: super: rec {
     withTreeSitter = true;
   };
   emacs = emacsGeneric.overrideAttrs (old: {
+    buildInputs = old.buildInputs ++ [ super.harfbuzz.dev ];
     patches = (old.patches or [ ]) ++ [
       # Don't raise another frame when closing a frame
       (super.fetchpatch {

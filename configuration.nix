@@ -78,7 +78,8 @@ in {
   nix.settings = {
     # Necessary for using flakes on this system.
     experimental-features = "nix-command flakes";
-    trusted-substituters = [ "r2cuser" ];
+    extra-trusted-substituters = [ "r2cuser" ];
+    trusted-users = [ "r2cuser" ];
     substituters =
       [ "https://nix-community.cachix.org" "https://semgrep.cachix.org" ];
     trusted-public-keys = [

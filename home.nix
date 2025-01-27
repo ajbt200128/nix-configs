@@ -18,26 +18,27 @@
     packages = with pkgs;
       [
         asciinema
-        autoconf
         awscli2
         baobab
         bat
         black
         btop
         cachix
+        cmake
         curl
         delta
         direnv
         docker
         docker-compose
         dos2unix
+        emacs-lsp-booster
         evil-helix
         exiftool
         fd
         ffmpeg
         fzf
         gawk
-        gh
+        git
         git-lfs
         gnumake
         gnused
@@ -99,6 +100,7 @@
         PATH = "$HOME/.emacs.d/bin:$HOME/.local/bin:$PATH";
         BAT_THEME = "Nord";
         AWS_PROFILE = "engineer";
+        EDITOR = "${pkgs.evil-helix}/bin/hx";
       };
       enableCompletion = true;
       syntaxHighlighting.enable = true;
@@ -178,9 +180,6 @@
 
         # So we get proper colors from emacs in the terminal
         # ln -s -F ${pkgs.kitty.terminfo.outPath}/share/terminfo/78/xterm-kitty ~/.terminfo/78/xterm-kitty
-
-        # Set default editor to emacsclient
-        export EDITOR="${pkgs.emacs}/bin/emacsclient -nw -s $(lsof -c emacs | grep emacs$UID/server | grep -E -o '[^[:blank:]]*$' | head -n 1)"
 
         # eval opam if we arent in the semgrep flake dir
         if [[ -z "''${SEMGREP_NIX_BUILD-}" ]]; then
