@@ -6,7 +6,7 @@ in {
   # $ nix-env -qaP | grep wget
   environment = {
     systemPackages = with pkgs; [
-      emacs
+      emacs30
       htop
       juicefs
       pkg-config
@@ -53,7 +53,7 @@ in {
     nix-daemon.enable = true;
     emacs = {
       enable = true;
-      package = pkgs.emacs;
+      package = pkgs.emacs30;
     };
     # Tiling WM for macOS
     yabai = {
