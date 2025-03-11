@@ -30,6 +30,7 @@
         direnv
         docker
         docker-compose
+        docker-buildx
         dos2unix
         emacs-lsp-booster
         evil-helix
@@ -43,6 +44,7 @@
         gnumake
         gnused
         gnutar
+        graphite-cli
         graphviz
         grpcurl
         jq
@@ -112,7 +114,7 @@
         esrestart = "launchctl kickstart -k gui/502/org.nixos.emacs";
         eswhere =
           "lsof -c emacs | grep emacs$UID/server | grep -E -o '[^[:blank:]]*$' | head -n 1";
-        et = "${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere)";
+        et = "${pkgs.emacs30}/bin/emacsclient -nw -s $(eswhere)";
         magit =
           "git rev-parse --show-toplevel &> /dev/null && ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval '(magit-status)'";
         agenda = ''
@@ -167,7 +169,7 @@
         }
 
         function vlf() {
-          ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval "(vlf \"$1\")"
+          ${pkgs.emacs30}/bin/emacsclient -nw -s $(eswhere) --eval "(vlf \"$1\")"
         }
 
         ## Terminal settings

@@ -50,7 +50,6 @@ in {
   };
   services = {
     # Auto upgrade nix package and the daemon service.
-    nix-daemon.enable = true;
     emacs = {
       enable = true;
       package = pkgs.emacs30;
