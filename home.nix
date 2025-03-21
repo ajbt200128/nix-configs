@@ -91,6 +91,10 @@
   programs = {
     # Let Home Manager install and manage itself.
     home-manager.enable = true;
+    nix-index = {
+      enable = true;
+      enableZshIntegration = true;
+    };
     direnv = {
       enable = true;
       nix-direnv.enable = true;
