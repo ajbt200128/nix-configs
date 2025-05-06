@@ -74,6 +74,7 @@
         spotify
         starship
         terraform
+        texlive.combined.scheme-full
         time
         tree-sitter
         uv
