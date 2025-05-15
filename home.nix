@@ -193,8 +193,6 @@
           eval $(opam env)
         fi
 
-        # Set up homebrew
-        export PKG_CONFIG_PATH="$HOMEBREW_PREFIX/lib/pkgconfig:$PKG_CONFIG_PATH";
         # Doesn't work when set in session vars for some reason
         # check if cwd = /
         if [ "$PWD" = "/" ]; then

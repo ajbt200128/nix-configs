@@ -5,16 +5,20 @@
 # https://github.com/nix-community/emacs-overlay/blob/master/overlays/emacs.nix
 # https://github.com/d12frosted/homebrew-emacs-plus/tree/master/patches/emacs-30
 
-self: super: rec {
+self: super:
+
+let
   # configuration shared for all systems
-  emacsGeneric = super.emacs30.override {
+  emacsGeneric = super.emacs.override {
     withSQLite3 = true;
     withWebP = true;
     withImageMagick = true;
     # have to force this; lib.version check wrong or because emacsGit?
     withTreeSitter = true;
+    # broken on 15.4
+    withNativeCompilation = true;
   };
-  emacs30 = emacsGeneric.overrideAttrs (old: {
+  emacsPatched = emacsGeneric.overrideAttrs (old: {
     env = old.env // {
       NIX_CFLAGS_COMPILE = (old.env.NIX_CFLAGS_COMPILE or "")
         + " -DFD_SETSIZE=65536 -DDARWIN_UNLIMITED_SELECT";
@@ -41,4 +45,6 @@ self: super: rec {
       })
     ];
   });
-}
+  emacs = (super.emacsPackagesFor emacsPatched).emacsWithPackages
+    (epkgs: [ epkgs.jinx epkgs.vterm epkgs.org-pdftools epkgs.pdf-tools ]);
+in { inherit emacs; }

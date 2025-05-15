@@ -6,7 +6,8 @@ in {
   # $ nix-env -qaP | grep wget
   environment = {
     systemPackages = with pkgs; [
-      emacs30
+      emacs
+      enchant
       htop
       juicefs
       pkg-config
@@ -22,16 +23,7 @@ in {
 
   homebrew = {
     enable = true;
-    brews = [
-      {
-        name = "semgrep/infra/libxmlsec1@1.2.37";
-        link = true;
-        conflicts_with = [ "libxmlsec1" ];
-      }
-      "depot"
-      "emscripten"
-      "enchant"
-    ];
+    brews = [ "depot" "emscripten" ];
     caskArgs.appdir = "~/Applications";
     casks = [
       "betterdisplay"
@@ -44,19 +36,12 @@ in {
       "sf-symbols"
       "xquartz"
     ];
-    taps = [
-      {
-        name = "semgrep/infra";
-        clone_target = "git@github.com:semgrep/homebrew-infra.git";
-      }
-      "depot/tap"
-    ];
   };
   services = {
-    # Auto upgrade nix package and the daemon service.
     emacs = {
       enable = true;
-      package = pkgs.emacs30;
+      # use patched emacs for daemon
+      package = pkgs.emacs;
     };
     # Tiling WM for macOS
     yabai = {
