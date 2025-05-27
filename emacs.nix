@@ -16,7 +16,7 @@ let
     # have to force this; lib.version check wrong or because emacsGit?
     withTreeSitter = true;
     # broken on 15.4
-    withNativeCompilation = true;
+    # withNativeCompilation = true;
   };
   emacsPatched = emacsGeneric.overrideAttrs (old: {
     env = old.env // {
