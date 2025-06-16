@@ -10,8 +10,8 @@
 
   outputs = inputs@{ self, nix-darwin, nixpkgs, home-manager }: {
     # Build darwin flake using:
-    # $ darwin-rebuild build --flake .#MacBook-Pro-2
-    darwinConfigurations."MacBook-Pro-2" = nix-darwin.lib.darwinSystem {
+    # $ darwin-rebuild build --flake .#MacBook-Pro-6
+    darwinConfigurations."MacBook-Pro-6" = nix-darwin.lib.darwinSystem {
 
       modules = [
         ./configuration.nix
@@ -31,6 +31,6 @@
     };
 
     # Expose the package set, including overlays, for convenience.
-    darwinPackages = self.darwinConfigurations."MacBook-Pro-2".pkgs;
+    darwinPackages = self.darwinConfigurations."MacBook-Pro-5".pkgs;
   };
 }
