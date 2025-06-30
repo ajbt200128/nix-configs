@@ -34,6 +34,7 @@ in {
       "macfuse"
       "mactex"
       "sf-symbols"
+      "vial"
       "xquartz"
     ];
   };
