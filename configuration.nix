@@ -23,10 +23,11 @@ in {
 
   homebrew = {
     enable = true;
-    brews = [ "depot" "emscripten" ];
+    brews = [ "depot" ];
     caskArgs.appdir = "~/Applications";
     casks = [
       "betterdisplay"
+      "daisydisk"
       "dmenu-mac"
       "font-hack-nerd-font"
       "font-iosevka-nerd-font"
@@ -81,6 +82,7 @@ in {
   programs.zsh.enable = true; # default shell on catalina
   # programs.fish.enable = true;
 
+  system.primaryUser = "r2cuser"; # The primary user of the system.
   # Set Git commit hash for darwin-version.
   #system.configurationRevision = self.rev or self.dirtyRev or null;
   system.defaults = {

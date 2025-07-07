@@ -74,7 +74,7 @@
         spotify
         starship
         terraform
-        texlive.combined.scheme-full
+        # texlive.combined.scheme-full
         time
         tree-sitter
         uv
@@ -129,7 +129,7 @@
         icat = "kitty +kitten icat";
         ssh = "kitty +kitten ssh";
         rebuild =
-          "darwin-rebuild switch --flake $HOME/nix-darwin && source ~/.zshrc";
+          "sudo darwin-rebuild switch --flake $HOME/nix-darwin && source ~/.zshrc";
         stoplinuxbox =
           "${pkgs.awscli2}/bin/aws ec2 stop-instances --profile engineer-sandbox --instance-ids i-02146285258ff4d08";
         linuxbox =
