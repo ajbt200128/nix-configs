@@ -49,7 +49,6 @@
         graphite-cli
         graphviz
         grpcurl
-        helm
         jq
         jsonnet
         kitty
@@ -74,7 +73,6 @@
         shellcheck
         shfmt
         speedtest-go
-        spotify
         starship
         terraform
         # texlive.combined.scheme-full
