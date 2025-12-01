@@ -15,9 +15,11 @@
     stateVersion = "24.05";
 
     # TODO sort by category
-    packages = with pkgs;
+    packages =
+      with pkgs;
       [
         asciinema
+        asciinema-agg
         awscli2
         baobab
         bat
@@ -47,6 +49,7 @@
         graphite-cli
         graphviz
         grpcurl
+        helm
         jq
         jsonnet
         kitty
@@ -87,7 +90,8 @@
         yq-go
         zsh-autosuggestions
         zsh-syntax-highlighting
-      ] ++ (with pkgs.nodePackages; [ typescript-language-server ]);
+      ]
+      ++ (with pkgs.nodePackages; [ typescript-language-server ]);
   };
   programs = {
     # Let Home Manager install and manage itself.
@@ -117,23 +121,16 @@
       shellAliases = {
         ls = "${pkgs.lsd}/bin/lsd";
         esrestart = "launchctl kickstart -k gui/502/org.nixos.emacs";
-        eswhere =
-          "lsof -c emacs | grep emacs$UID/server | grep -E -o '[^[:blank:]]*$' | head -n 1";
+        eswhere = "lsof -c emacs | grep emacs$UID/server | grep -E -o '[^[:blank:]]*$' | head -n 1";
         et = "${pkgs.emacs30}/bin/emacsclient -nw -s $(eswhere)";
-        magit =
-          "git rev-parse --show-toplevel &> /dev/null && ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval '(magit-status)'";
-        agenda = ''
-          ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval '(org-agenda nil "c")' '';
-        todo = ''
-          ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval '(org-capture nil "t")' '';
+        magit = "git rev-parse --show-toplevel &> /dev/null && ${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval '(magit-status)'";
+        agenda = ''${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval '(org-agenda nil "c")' '';
+        todo = ''${pkgs.emacs}/bin/emacsclient -nw -s $(eswhere) --eval '(org-capture nil "t")' '';
         icat = "kitty +kitten icat";
         ssh = "kitty +kitten ssh";
-        rebuild =
-          "sudo darwin-rebuild switch --flake $HOME/nix-darwin && source ~/.zshrc";
-        stoplinuxbox =
-          "${pkgs.awscli2}/bin/aws ec2 stop-instances --profile engineer-sandbox --instance-ids i-02146285258ff4d08";
-        linuxbox =
-          "${pkgs.awscli2}/bin/aws ec2-instance-connect ssh --private-key-file ~/.ssh/aws_sandbox_ec2 --profile engineer-sandbox --os-user root --instance-id i-02146285258ff4d08";
+        rebuild = "sudo darwin-rebuild switch --flake $HOME/nix-darwin && source ~/.zshrc";
+        stoplinuxbox = "${pkgs.awscli2}/bin/aws ec2 stop-instances --profile engineer-sandbox --instance-ids i-02146285258ff4d08";
+        linuxbox = "${pkgs.awscli2}/bin/aws ec2-instance-connect ssh --private-key-file ~/.ssh/aws_sandbox_ec2 --profile engineer-sandbox --os-user root --instance-id i-02146285258ff4d08";
         "rec" = "${pkgs.asciinema}/bin/asciinema rec";
       };
       oh-my-zsh = {
@@ -192,6 +189,8 @@
         if [[ -z "''${SEMGREP_NIX_BUILD-}" ]]; then
           eval $(opam env)
         fi
+        # add cargo bin to path
+        export PATH="$HOME/.cargo/bin:$PATH"
 
         # Doesn't work when set in session vars for some reason
         # check if cwd = /
