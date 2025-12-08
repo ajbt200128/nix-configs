@@ -1,7 +1,11 @@
 { pkgs, ... }:
-let pkgsWithEmacsPatches = pkgs.extend (import ./emacs.nix);
-in let pkgs = pkgsWithEmacsPatches;
-in {
+let
+  pkgsWithEmacsPatches = pkgs.extend (import ./emacs.nix);
+in
+let
+  pkgs = pkgsWithEmacsPatches;
+in
+{
   # List packages installed in system profile. To search by name, run:
   # $ nix-env -qaP | grep wget
   environment = {
@@ -15,11 +19,13 @@ in {
       sketchybar
       skhd
       vim
-      yabai
     ];
     pathsToLink = [ "/share/zsh" ];
   };
-  fonts.packages = with pkgs; [ fira-code source-code-pro ];
+  fonts.packages = with pkgs; [
+    fira-code
+    source-code-pro
+  ];
 
   homebrew = {
     enable = true;
@@ -45,23 +51,31 @@ in {
       # use patched emacs for daemon
       package = pkgs.emacs;
     };
-    # Tiling WM for macOS
-    yabai = {
+    aerospace = {
       enable = true;
-      enableScriptingAddition = true;
-      extraConfig = (builtins.readFile ./yabairc);
-    };
-    # Hotkey daemon for yabai
-    skhd = {
-      enable = true;
-      skhdConfig = (builtins.readFile ./skhdrc);
+      settings = ./aerospace.nix;
     };
     # Status bar for macOS
     sketchybar = {
       enable = true;
       config = ''
         PLUGIN_DIR=${./sketchybar/plugins}
-      '' + (builtins.readFile ./sketchybarrc);
+        ITEMS_DIR=${./sketchybar/items}
+      ''
+      + (builtins.readFile ./sketchybarrc);
+      extraPackages = with pkgs; [
+        jq
+      ];
+    };
+
+    jankyborders = {
+      enable = true;
+      # active color should be a nice pastel green
+      active_color = "#7FBF7F";
+      # inactive color should be a nice pastel gray
+      inactive_color = "#707070";
+
+      width = 3.0;
     };
   };
 
@@ -70,8 +84,10 @@ in {
     experimental-features = "nix-command flakes";
     extra-trusted-substituters = [ "r2cuser" ];
     trusted-users = [ "r2cuser" ];
-    substituters =
-      [ "https://nix-community.cachix.org" "https://semgrep.cachix.org" ];
+    substituters = [
+      "https://nix-community.cachix.org"
+      "https://semgrep.cachix.org"
+    ];
     trusted-public-keys = [
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
       "semgrep.cachix.org-1:waxSNb3ism0Vkmfa31//YYrOC2eMghZmTwy9bvMAGBI="

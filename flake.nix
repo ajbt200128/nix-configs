@@ -8,29 +8,36 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs@{ self, nix-darwin, nixpkgs, home-manager }: {
-    # Build darwin flake using:
-    # $ darwin-rebuild build --flake .#MacBook-Pro-7
-    darwinConfigurations."MacBook-Pro-7" = nix-darwin.lib.darwinSystem {
+  outputs =
+    inputs@{
+      self,
+      nix-darwin,
+      nixpkgs,
+      home-manager,
+    }:
+    {
+      # Build darwin flake using:
+      # $ darwin-rebuild build --flake .#MacBook-Pro-7
+      darwinConfigurations."MacBook-Pro-7" = nix-darwin.lib.darwinSystem {
 
-      modules = [
-        ./configuration.nix
-        home-manager.darwinModules.home-manager
-        {
-          home-manager = {
-            useGlobalPkgs = true;
-            useUserPackages = true;
-            users.r2cuser = import ./home.nix;
-          };
-          users.users.r2cuser = {
-            name = "r2cuser";
-            home = "/Users/r2cuser";
-          };
-        }
-      ];
+        modules = [
+          ./configuration.nix
+          home-manager.darwinModules.home-manager
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users.r2cuser = import ./home.nix;
+            };
+            users.users.r2cuser = {
+              name = "r2cuser";
+              home = "/Users/r2cuser";
+            };
+          }
+        ];
+      };
+
+      # Expose the package set, including overlays, for convenience.
+      darwinPackages = self.darwinConfigurations."MacBook-Pro-5".pkgs;
     };
-
-    # Expose the package set, including overlays, for convenience.
-    darwinPackages = self.darwinConfigurations."MacBook-Pro-5".pkgs;
-  };
 }
