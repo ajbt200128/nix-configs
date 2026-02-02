@@ -63,12 +63,10 @@
         okta-aws-cli
         opam
         pcre
-        pipx
         poetry
         postgresql_15_jit
         pre-commit
         protobuf
-        basedpyright
         rustup
         shellcheck
         shfmt

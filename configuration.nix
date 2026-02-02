@@ -39,7 +39,6 @@ in
       "font-iosevka-nerd-font"
       "kap"
       "macfuse"
-      "mactex"
       "sf-symbols"
       "vial"
       "xquartz"
