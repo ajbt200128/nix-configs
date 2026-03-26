@@ -26,9 +26,11 @@
         black
         btop
         cachix
+        claude-code
         cmake
         curl
         delta
+        devenv
         direnv
         docker
         docker-compose
@@ -41,6 +43,7 @@
         ffmpeg
         fzf
         gawk
+        gh
         git
         git-lfs
         gnumake
