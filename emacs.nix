@@ -23,7 +23,8 @@ let
         + " -DFD_SETSIZE=65536 -DDARWIN_UNLIMITED_SELECT";
     };
     patches = (old.patches or [ ]) ++ [
-      # Fix OS window role so that yabai can pick up Emacs
+      # Fix OS window role so AX-based window managers (aerospace, yabai)
+      # pick up Emacs frames as standard windows
       (super.fetchpatch {
         url =
           "https://raw.githubusercontent.com/d12frosted/homebrew-emacs-plus/master/patches/emacs-28/fix-window-role.patch";

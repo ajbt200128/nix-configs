@@ -1,0 +1,42 @@
+Inspired by https://github.com/nikitabobko/AeroSpace/pull/2036 — backported
+to aerospace v0.19.2-Beta (commit 36fde5991eb92cbd422c2ce26bd521dfaec704aa).
+
+PR 2036's main branch base needs Swift 6.2, which only ships in Xcode 17+;
+v0.19.2-Beta uses swift-tools-version 6.0 + .swift-version 6.1.2, matching
+Xcode 16.4's bundled toolchain. So we backport just the 10-line detector.
+
+Treats Emacs child frames (corfu / eldoc-box / posframe completion popups)
+as non-windows so AeroSpace no longer steals focus when they close
+(see https://github.com/nikitabobko/AeroSpace/issues/776).
+
+Matches both Emacs.app (bundle id "org.gnu.Emacs") AND nix-darwin's
+CLI-launched emacs daemon, which reports a nil bundle id but axApp AXTitle
+"emacs". Uses button-absence as the discriminator (verified empirically
+that emacs child frames have no close/min/zoom/fullscreen buttons,
+AXMain == false, AXFocused == false; AXSubrole is AXFloatingWindow but we
+don't gate on it for robustness across emacs/macOS versions).
+
+--- a/Sources/AppBundle/util/AxUiElementMockEx.swift
++++ b/Sources/AppBundle/util/AxUiElementMockEx.swift
+@@ -90,6 +90,21 @@
+             return false
+         }
+ 
++        // Emacs child frames (corfu / eldoc-box / posframe popups) are
++        // transient UI elements that should not be managed as windows.
++        let isEmacsApp = appBundleId == "org.gnu.Emacs"
++            || (appBundleId == nil && (axApp.get(Ax.titleAttr) ?? "").lowercased() == "emacs")
++        if isEmacsApp &&
++            get(Ax.closeButtonAttr) == nil &&
++            get(Ax.minimizeButtonAttr) == nil &&
++            get(Ax.zoomButtonAttr) == nil &&
++            get(Ax.fullscreenButtonAttr) == nil &&
++            get(Ax.isMainAttr) != true &&
++            get(Ax.isFocused) != true
++        {
++            return false
++        }
++
+         if appBundleId?.isFirefoxId() != true {
+             return isWindowHeuristicOld(axApp: axApp, appBundleId: appBundleId)
+         }

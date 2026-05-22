@@ -17,7 +17,6 @@ in
       pkg-config
       ripgrep
       sketchybar
-      skhd
       vim
     ];
     pathsToLink = [ "/share/zsh" ];
@@ -50,10 +49,11 @@ in
       # use patched emacs for daemon
       package = pkgs.emacs;
     };
-    aerospace = {
-      enable = true;
-      settings = ./aerospace.nix;
-    };
+    # Disabled: we install aerospace from jperras's PR 2036 fork via brew
+    # install-from-sources to pick up the emacs child-frame focus-jump fix
+    # (https://github.com/nikitabobko/AeroSpace/pull/2036). Config is rendered
+    # to ~/.config/aerospace/aerospace.toml in home.nix from ./aerospace.nix.
+    aerospace.enable = false;
     # Status bar for macOS
     sketchybar = {
       enable = true;
@@ -81,7 +81,6 @@ in
   nix.settings = {
     # Necessary for using flakes on this system.
     experimental-features = "nix-command flakes";
-    extra-trusted-substituters = [ "r2cuser" ];
     trusted-users = [ "r2cuser" ];
     substituters = [
       "https://nix-community.cachix.org"

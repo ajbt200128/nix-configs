@@ -14,12 +14,18 @@
     # changes in each release.
     stateVersion = "24.05";
 
+    # services.aerospace is disabled (see configuration.nix); aerospace is
+    # installed imperatively from jperras's PR 2036 fork via brew
+    # install-from-sources to fix the emacs child-frame focus-jump bug.
+    # We still render the config declaratively from ./aerospace.nix.
+    file.".config/aerospace/aerospace.toml".source =
+      (pkgs.formats.toml { }).generate "aerospace.toml" (import ./aerospace.nix);
+
     # TODO sort by category
     packages = with pkgs; [
       asciinema
       asciinema-agg
       awscli2
-      baobab
       bat
       black
       btop
@@ -43,6 +49,8 @@
       gh
       git
       git-lfs
+      go
+      gopls
       gnumake
       gnused
       gnutar

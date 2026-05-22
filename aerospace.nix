@@ -74,7 +74,7 @@ in
 
     cmd-shift-f = "macos-native-fullscreen";
 
-    cmd-shift-r = "exec-and-forget launchctl kickstart -k gui/502/org.nixos.aerospace; sketchybar --reload";
+    cmd-shift-r = "exec-and-forget aerospace reload-config; sketchybar --reload";
 
     cmd-shift-0 = "exec-and-forget pmset display sleepnow";
 
