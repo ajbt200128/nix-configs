@@ -6,6 +6,11 @@ let
   ];
 in
 {
+  # Register AeroSpace.app as a macOS Login Item on first launch.
+  # Required since services.aerospace (which used a launchd plist) is
+  # disabled — we run from /Applications/AeroSpace.app instead.
+  start-at-login = true;
+
   default-root-container-layout = "tiles";
   gaps = {
     outer.left = 8;
