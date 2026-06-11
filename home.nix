@@ -30,6 +30,7 @@
       black
       btop
       cachix
+      ckc
       cmake
       curl
       delta
@@ -134,6 +135,11 @@
         rebuild = "sudo darwin-rebuild switch --flake $HOME/nix-darwin && source ~/.zshrc";
         stoplinuxbox = "${pkgs.awscli2}/bin/aws ec2 stop-instances --profile engineer-sandbox --instance-ids i-02146285258ff4d08";
         linuxbox = "${pkgs.awscli2}/bin/aws ec2-instance-connect ssh --private-key-file ~/.ssh/aws_sandbox_ec2 --profile engineer-sandbox --os-user root --instance-id i-02146285258ff4d08";
+        # claude-box: c6i.12xlarge build box in the dev VPC; reached over tailscale at its stable private IP; ssh auto-attaches the 'claude' tmux session
+        stopclaudebox = "${pkgs.awscli2}/bin/aws ec2 stop-instances --profile engineer-sandbox --instance-ids i-019b0d7da7ac06c0b";
+        # connecting auto-attaches the persistent 'claude' tmux session (via claude-tmux in the box's .bashrc), so you land in the live run.
+        # detach with Ctrl-b then d to leave it running; reconnect anytime with claudebox. if it doesn't auto-attach, run: claude-tmux
+        claudebox = "ssh -i ~/.ssh/aws_sandbox_ec2 ubuntu@172.16.1.23";
         "rec" = "${pkgs.asciinema}/bin/asciinema rec";
       };
       oh-my-zsh = {
@@ -171,6 +177,17 @@
           ${pkgs.awscli2}/bin/aws ec2 start-instances --profile engineer-sandbox --instance-ids i-02146285258ff4d08
           ip_addr=$(${pkgs.awscli2}/bin/aws ec2 describe-instances --profile engineer-sandbox --instance-ids i-02146285258ff4d08 --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
           echo "Host linuxbox\n\tHostname $ip_addr\n\tUser root\n\tIdentityFile ~/.ssh/aws_sandbox_ec2" > ~/.ssh/aws_box_config
+        }
+
+        # start the claude-box and wait until sshd is actually accepting (running-state alone is too early)
+        function startclaudebox() {
+          ${pkgs.awscli2}/bin/aws ec2 start-instances --profile engineer-sandbox --instance-ids i-019b0d7da7ac06c0b
+          ${pkgs.awscli2}/bin/aws ec2 wait instance-running --profile engineer-sandbox --instance-ids i-019b0d7da7ac06c0b
+          echo -n "claude-box running; waiting for sshd"
+          until /usr/bin/ssh -i ~/.ssh/aws_sandbox_ec2 -o StrictHostKeyChecking=accept-new -o ConnectTimeout=3 -o BatchMode=yes ubuntu@172.16.1.23 true 2>/dev/null; do
+            echo -n "."; sleep 3
+          done
+          echo " ready — connect with: claudebox"
         }
 
         function vlf() {

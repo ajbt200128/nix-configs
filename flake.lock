@@ -1,5 +1,22 @@
 {
   "nodes": {
+    "devops-tools": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1780604125,
+        "narHash": "sha256-wWRdEqZoqyNhVLfr4ISH8tXQF6ufB7y00zuBrygRjDU=",
+        "ref": "develop",
+        "rev": "24e25d19497d694bc0edad3a9e5cb85d220abe90",
+        "revCount": 210,
+        "type": "git",
+        "url": "ssh://git@github.com/semgrep/devops-tools.git"
+      },
+      "original": {
+        "ref": "develop",
+        "type": "git",
+        "url": "ssh://git@github.com/semgrep/devops-tools.git"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -58,6 +75,7 @@
     },
     "root": {
       "inputs": {
+        "devops-tools": "devops-tools",
         "home-manager": "home-manager",
         "nix-darwin": "nix-darwin",
         "nixpkgs": "nixpkgs"
