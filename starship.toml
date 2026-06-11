@@ -4,6 +4,9 @@
 # Inserts a blank line between shell prompts
 add_newline = true
 
+# ceiling for custom-module commands (box-status is cached, so really ~60ms)
+command_timeout = 1000
+
 format = "$time$username$all"
 
 # Replace the "❯" symbol in the prompt with "➜"
@@ -212,3 +215,14 @@ format = '\[[$symbol($version)]($style)\]'
 
 [zig]
 format = '\[[$symbol($version)]($style)\]'
+
+## Semgrep dev boxes reachable over tailscale.
+# box-status serves a cached answer (~60ms) and refreshes in the background, so
+# this stays fast whether the boxes are up or down. `when` hides it when none up.
+[custom.boxes]
+command = "$HOME/.local/bin/box-status --prompt"
+when = "$HOME/.local/bin/box-status --prompt"
+shell = ["bash", "--noprofile", "--norc"]
+style = "bold green"
+# $output is already per-box glyphs (󰒋 claude-box, 󰌢 claude-box-mini)
+format = '\[[$output]($style)\]'

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -uo pipefail
+[ -f "$HOME/.config/claude-box/env" ] && source "$HOME/.config/claude-box/env"
+if [ -z "${ANTHROPIC_API_KEY:-}" ]; then
+  echo "!! ANTHROPIC_API_KEY not set — edit ~/.config/claude-box/env, then re-run start-claude." >&2
+  exec bash
+fi
+cd "$HOME/semgrep-proprietary"
+exec claude --dangerously-skip-permissions "$@"

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -uo pipefail
+export PATH="$HOME/.local/bin:$PATH"
+if ! tmux has-session -t claude 2>/dev/null; then
+  source "$HOME/.config/claude-box/env" 2>/dev/null || true
+  if [ -n "${ANTHROPIC_API_KEY:-}" ]; then
+    tmux new-session -d -s claude "start-claude; echo '[claude exited — press enter for a shell]'; exec bash"
+  else
+    tmux new-session -d -s claude
+    tmux send-keys -t claude 'echo ">> No API key yet. Put it in ~/.config/claude-box/env then run: start-claude"' C-m
+  fi
+fi
+exec tmux attach -t claude

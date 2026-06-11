@@ -21,6 +21,12 @@
     file.".config/aerospace/aerospace.toml".source =
       (pkgs.formats.toml { }).generate "aerospace.toml" (import ./aerospace.nix);
 
+    # dev-box reachability probe used by the shell-start message + starship module
+    file.".local/bin/box-status" = {
+      source = ./scripts/box-status.sh;
+      executable = true;
+    };
+
     # TODO sort by category
     packages = with pkgs; [
       asciinema
@@ -76,6 +82,7 @@
       postgresql_15_jit
       pre-commit
       protobuf
+      rsync
       rustup
       shellcheck
       shfmt
@@ -133,13 +140,14 @@
         icat = "kitty +kitten icat";
         ssh = "kitty +kitten ssh";
         rebuild = "sudo darwin-rebuild switch --flake $HOME/nix-darwin && source ~/.zshrc";
-        stoplinuxbox = "${pkgs.awscli2}/bin/aws ec2 stop-instances --profile engineer-sandbox --instance-ids i-02146285258ff4d08";
-        linuxbox = "${pkgs.awscli2}/bin/aws ec2-instance-connect ssh --private-key-file ~/.ssh/aws_sandbox_ec2 --profile engineer-sandbox --os-user root --instance-id i-02146285258ff4d08";
         # claude-box: c6i.12xlarge build box in the dev VPC; reached over tailscale at its stable private IP; ssh auto-attaches the 'claude' tmux session
         stopclaudebox = "${pkgs.awscli2}/bin/aws ec2 stop-instances --profile engineer-sandbox --instance-ids i-019b0d7da7ac06c0b";
+        # claude-box-mini: c6i.2xlarge everyday box that replaced the old linuxbox; same dev VPC/tailscale subnet + claude-box auto-tmux setup
+        stopclaudeboxmini = "${pkgs.awscli2}/bin/aws ec2 stop-instances --profile engineer-sandbox --instance-ids i-025db810fe058e994";
         # connecting auto-attaches the persistent 'claude' tmux session (via claude-tmux in the box's .bashrc), so you land in the live run.
-        # detach with Ctrl-b then d to leave it running; reconnect anytime with claudebox. if it doesn't auto-attach, run: claude-tmux
+        # detach with Ctrl-b then d to leave it running; reconnect anytime. if it doesn't auto-attach, run: claude-tmux
         claudebox = "ssh -i ~/.ssh/aws_sandbox_ec2 ubuntu@172.16.1.23";
+        claudeboxmini = "ssh -i ~/.ssh/aws_sandbox_ec2 ubuntu@172.16.1.24";
         "rec" = "${pkgs.asciinema}/bin/asciinema rec";
       };
       oh-my-zsh = {
@@ -173,12 +181,6 @@
           ${pkgs.awscli2}/bin/aws ecr get-login-password | ${pkgs.docker}/bin/docker login --username AWS --password-stdin 533267142541.dkr.ecr.us-west-2.amazonaws.com
         }
 
-        function startlinuxbox() {
-          ${pkgs.awscli2}/bin/aws ec2 start-instances --profile engineer-sandbox --instance-ids i-02146285258ff4d08
-          ip_addr=$(${pkgs.awscli2}/bin/aws ec2 describe-instances --profile engineer-sandbox --instance-ids i-02146285258ff4d08 --query 'Reservations[*].Instances[*].PublicIpAddress' --output text)
-          echo "Host linuxbox\n\tHostname $ip_addr\n\tUser root\n\tIdentityFile ~/.ssh/aws_sandbox_ec2" > ~/.ssh/aws_box_config
-        }
-
         # start the claude-box and wait until sshd is actually accepting (running-state alone is too early)
         function startclaudebox() {
           ${pkgs.awscli2}/bin/aws ec2 start-instances --profile engineer-sandbox --instance-ids i-019b0d7da7ac06c0b
@@ -188,6 +190,42 @@
             echo -n "."; sleep 3
           done
           echo " ready — connect with: claudebox"
+        }
+
+        # claude-box-mini: the small everyday box that replaced linuxbox
+        function startclaudeboxmini() {
+          ${pkgs.awscli2}/bin/aws ec2 start-instances --profile engineer-sandbox --instance-ids i-025db810fe058e994
+          ${pkgs.awscli2}/bin/aws ec2 wait instance-running --profile engineer-sandbox --instance-ids i-025db810fe058e994
+          echo -n "claude-box-mini running; waiting for sshd"
+          until /usr/bin/ssh -i ~/.ssh/aws_sandbox_ec2 -o StrictHostKeyChecking=accept-new -o ConnectTimeout=3 -o BatchMode=yes ubuntu@172.16.1.24 true 2>/dev/null; do
+            echo -n "."; sleep 3
+          done
+          echo " ready — connect with: claudeboxmini"
+        }
+
+        # rsync the current repo <-> a dev box (host token: claudebox|big -> .23, mini|claudeboxmini -> .24)
+        function _cbox_target() {
+          case "$1" in
+            mini|claude-box-mini|claudeboxmini) echo "ubuntu@172.16.1.24" ;;
+            big|claudebox|claude-box)           echo "ubuntu@172.16.1.23" ;;
+            *) return 1 ;;
+          esac
+        }
+        # push mirrors UP (--delete so remote matches local); honors .gitignore
+        function pushrepo() {
+          local target; target=$(_cbox_target "''${1:-}") || { echo "usage: pushrepo <claudebox|mini>   # syncs current repo up to <host>:~/<dirname>"; return 1; }
+          local name="''${PWD:t}"
+          echo "→ push  $PWD  =>  $target:~/$name/"
+          ${pkgs.rsync}/bin/rsync -azh --delete --filter=':- .gitignore' \
+            -e "/usr/bin/ssh -i $HOME/.ssh/aws_sandbox_ec2" "$PWD/" "$target:$name/"
+        }
+        # pull brings DOWN without --delete, so local-only files are kept; honors .gitignore
+        function pullrepo() {
+          local target; target=$(_cbox_target "''${1:-}") || { echo "usage: pullrepo <claudebox|mini>   # syncs <host>:~/<dirname> down into current repo"; return 1; }
+          local name="''${PWD:t}"
+          echo "← pull  $target:~/$name/  =>  $PWD"
+          ${pkgs.rsync}/bin/rsync -azh --filter=':- .gitignore' \
+            -e "/usr/bin/ssh -i $HOME/.ssh/aws_sandbox_ec2" "$target:$name/" "$PWD/"
         }
 
         function vlf() {
@@ -216,6 +254,14 @@
         # check if cwd = /
         if [ "$PWD" = "/" ]; then
           cd ~
+        fi
+
+        # at shell start, show which dev boxes are reachable — instant (reads the
+        # box-status cache, refreshing in the background). see ~/.local/bin/box-status
+        if [[ -x "$HOME/.local/bin/box-status" ]]; then
+          _boxes_up=$("$HOME/.local/bin/box-status" --prompt 2>/dev/null)
+          [[ -n "$_boxes_up" ]] && print -P "%F{green}dev boxes up:%f $_boxes_up"
+          unset _boxes_up
         fi
       '';
       profileExtra = ''eval "$(/opt/homebrew/bin/brew shellenv)"'';
